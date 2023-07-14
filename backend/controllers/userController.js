@@ -6,6 +6,7 @@ const registerUser = async (req, res) => {
     await userService.registerUser(username, email, password);
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -16,7 +17,8 @@ const loginUser = async (req, res) => {
     const token = await userService.loginUser(email, password);
     res.json({ token });
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    console.log(error);
+    res.status(500).json({ error: error.message });
   }
 };
 

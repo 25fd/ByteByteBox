@@ -1,22 +1,31 @@
 
 import React, { useState } from 'react';
 import api from '../api';
+import Toast from '../components/Tost';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showToast, setShowToast] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [type, setType] = React.useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const userData = { email, password };
       const response = await api.login(userData);
-      console.log(response);
-      // Handle success or display error message to the user
+      if (response.error) {
+        setMessage(response.error);
+        setType('error');
+      } else {
+        setMessage(response.message);
+        setType('success');
+      }
     } catch (error) {
-      console.error('Error logging in:', error);
-      // Display error message to the user
+       console.log(error);
     }
+    setShowToast(true);
   };
 
   return (
@@ -36,6 +45,13 @@ const LoginForm = () => {
       />
       <br />
       <button type="submit">Login</button>
+      {showToast && (
+        <Toast
+          message={message}
+          type={type}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </form>
   );
 };

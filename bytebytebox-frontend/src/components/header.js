@@ -8,14 +8,15 @@ const Header = ({ loginUser }) => {
         <div className="logo">
           <Link to="/">ByteByteBox</Link>
         </div>
-        loginUser ? (
+        {loginUser ? (
           <div className="menu">
-          <div className="welcome">Welcome {loginUser.username}</div>
+          <div className="welcome">Welcome {loginUser?.username}</div>
         </div>
         ) :(<div className="menu">
           <Link to="/register">Register</Link>
           <Link to="/login">Login</Link>
         </div>)
+}
       </nav>
     </header>
   );

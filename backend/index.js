@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./db');
+const cors = require('cors');
 
 // Import routes
 const userRoutes = require('./routes/user.js');
@@ -17,6 +18,8 @@ const port = process.env.PORT || 8080;
 // Middleware
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors());
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,

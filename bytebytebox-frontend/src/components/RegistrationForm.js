@@ -1,22 +1,32 @@
 import React, { useState } from 'react';
 import api from '../api';
+import Toast from '../components/Tost';
+
 
 const RegistrationForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showToast, setShowToast] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [type, setType] = React.useState('');
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
       const userData = { username, email, password };
       const response = await api.register(userData);
-      console.log(response);
-      // Handle success or display error message to the user
+      if (response.error) {
+        setMessage(response.error);
+        setType('error');
+      } else {
+        setMessage(response.message);
+      setType('success');
+      }
     } catch (error) {
-      console.error('Error registering user:', error);
-      // Display error message to the user
+      console.log(error);
     }
+    setShowToast(true);
   };
 
   return (
@@ -43,6 +53,13 @@ const RegistrationForm = () => {
       />
       <br />
       <button type="submit">Register</button>
+      {showToast && (
+        <Toast
+          message={message}
+          type={type}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </form>
   );
 };
