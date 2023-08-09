@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import api from '../api';
 import Toast from '../components/Tost';
+import { useAuth } from '../contexts/AuthContext';
 
 
 const RegistrationForm = () => {
+  const { register } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,8 +15,7 @@ const RegistrationForm = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const userData = { username, email, password };
-      const response = await api.register(userData);
+      const response = await register(username, email, password);
       if (response.error) {
         setMessage(response.error);
         setType('error');

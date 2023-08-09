@@ -2,8 +2,11 @@
 import React, { useState } from 'react';
 import api from '../api';
 import Toast from '../components/Tost';
+import { useAuth } from '../contexts/AuthContext';
+
 
 const LoginForm = () => {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showToast, setShowToast] = React.useState(false);
@@ -13,8 +16,7 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const userData = { email, password };
-      const response = await api.login(userData);
+      const response = await await login(email, password);
       if (response.error) {
         setMessage(response.error);
         setType('error');

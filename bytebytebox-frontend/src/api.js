@@ -25,6 +25,17 @@ const api = {
     const data = await response.json();
     return data;
   },
+  uploadFile: async (fileData) => {
+    const response = await fetch(`${BASE_URL}/files/upload`, {
+      method: 'POST',
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: fileData,
+    });
+    const data = await response.json();
+    return data;
+  },
 };
 
 export default api;
