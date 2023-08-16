@@ -8,16 +8,13 @@ exports.uploadAndSaveFile = async (file, userId) => {
     const { originalname, path } = file;
 
     // Upload the file to S3 and get the file URL
-    const fileUrl = await s3Service.uploadFileToS3(file);
-
+    const { Location: fileUrl, Key: fileKey } = await s3Service.uploadFileToS3(file);
     // Create a new file document with the S3 file URL
     const fileData = new File({
       name: originalname,
       owner: userId,
       url: fileUrl,
-      permissions: [
-        { user: userId, read: true, write: true } // Give the owner read and write permissions by default
-      ],
+      fileKey,
     });
 
     await fileData.save();
@@ -38,9 +35,8 @@ exports.deleteAndRemoveFile = async (fileId) => {
     }
 
     // Delete the file from S3
-    await s3Service.deleteFileFromS3(file.url);
-
-    await file.remove();
+    await s3Service.deleteFileFromS3(file.fileKey);
+    await File.findByIdAndRemove(fileId).exec();
   } catch (error) {
     console.error('Error deleting and removing file:', error);
     throw error;
@@ -48,21 +44,24 @@ exports.deleteAndRemoveFile = async (fileId) => {
 };
 
 // Share file with another user
-exports.shareFileWithUser = async (fileId, userId, read, write) => {
+exports.shareFileWithUser = async (fileId, email, read, write) => {
   try {
     const file = await File.findById(fileId);
     if (!file) {
       throw new Error('File not found');
     }
 
-    if (file.owner.toString() !== userId) {
-      throw new Error('You are not authorized to share this file');
-    }
-
-    const user = await User.findById(userId);
+    const user = await User.findOne({email});
     if (!user) {
       throw new Error('User not found');
     }
+    const userId = user._id.toString();
+
+    if (file.owner.toString() === userId) {
+      throw new Error('You are not authorized to share this file');
+    }
+
+    
 
     const permissions = file.permissions.find((permission) => permission.user.toString() === userId);
     if (permissions) {
@@ -83,14 +82,13 @@ exports.shareFileWithUser = async (fileId, userId, read, write) => {
 exports.getUserFiles = async (userId) => {
   try {
     // Find all files where the user is the owner or in the permissions array
-    const userFiles = await File.find({
-      $or: [
-        { owner: userId },
-        { 'permissions.user': userId },
-      ],
+    const ownedFiles = await File.find({
+       owner: userId ,
     });
 
-    return userFiles;
+    const sharedFiles = await File.find( { 'permissions.user': userId });
+
+    return {ownedFiles, sharedFiles};
   } catch (error) {
     console.error('Error getting user files:', error);
     throw error;

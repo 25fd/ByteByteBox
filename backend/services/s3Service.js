@@ -24,15 +24,27 @@ exports.uploadFileToS3 = async (file) => {
       Key: fileKey,
       Body: fileStream,
       ContentType: mimetype,
-      ACL: 'private', // Set the desired access control list for the uploaded file
     };
 
     const uploadResult = await s3.upload(params).promise();
-
     // Return the S3 file URL
-    return uploadResult.Location;
+    return uploadResult;
   } catch (error) {
     console.error('Error uploading file to S3:', error);
     throw error;
+  }
+};
+
+exports.deleteFileFromS3 = async (fileKey) => {
+  try {
+    const params = {
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: fileKey,
+    };
+
+    const s3 = new AWS.S3();
+    await s3.deleteObject(params).promise();
+  } catch (error) {
+   console.log(error)
   }
 };

@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import api from '../api';
 import Toast from '../components/Tost';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from "react-router-dom";
 
 
 const LoginForm = () => {
@@ -12,17 +12,20 @@ const LoginForm = () => {
   const [showToast, setShowToast] = React.useState(false);
   const [message, setMessage] = React.useState('');
   const [type, setType] = React.useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await await login(email, password);
+      const response = await login(email, password);
       if (response.error) {
+        console.log(response.error);
         setMessage(response.error);
         setType('error');
       } else {
         setMessage(response.message);
         setType('success');
+        navigate('/home');
       }
     } catch (error) {
        console.log(error);

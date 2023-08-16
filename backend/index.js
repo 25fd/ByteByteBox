@@ -7,6 +7,7 @@ const cors = require('cors');
 
 // Import routes
 const userRoutes = require('./routes/user.js');
+const fileRoutes = require('./routes/files.js');
 
 // Load environment variables from a .env file
 require('dotenv').config();
@@ -30,6 +31,7 @@ app.use(
 
 // Routes
 app.use('/api/user', userRoutes);
+app.use('/api/file', fileRoutes);
 
 // Connect to MongoDB
 connectDB();

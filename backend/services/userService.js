@@ -1,6 +1,10 @@
 const User = require('../models/UserModel');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto')
+
+const hashPassword = (password) => {
+  return crypto.createHash('sha256').update(password).digest('hex');
+};
 
 const registerUser = async (username, email, password) => {
   // Check if the user already exists
@@ -10,8 +14,7 @@ const registerUser = async (username, email, password) => {
   }
 
   // Hash the password
-  // const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, 10);
+   const hashedPassword = hashPassword(password);
 
   // Create a new user
   const user = new User({
@@ -31,8 +34,8 @@ const loginUser = async (email, password) => {
   }
 
   // Compare passwords
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
+  const hashedPassword = hashPassword(password);
+  if (user.password !== hashedPassword) {
     throw new Error('Invalid email and password combination');
   }
 
@@ -41,7 +44,7 @@ const loginUser = async (email, password) => {
     expiresIn: '1h',
   });
 
-  return token;
+  return { token, user };
 };
 
 module.exports = {

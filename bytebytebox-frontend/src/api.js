@@ -26,12 +26,63 @@ const api = {
     return data;
   },
   uploadFile: async (fileData) => {
-    const response = await fetch(`${BASE_URL}/files/upload`, {
+    const user = localStorage.getItem('user');
+    const { token } = JSON.parse(user);
+    const response = await fetch(`${BASE_URL}/file/upload`, {
       method: 'POST',
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        authorization: `Bearer ${token}`,
       },
       body: fileData,
+    });
+    const data = await response.json();
+    return data;
+  },
+  getUserFilesApi: async (fileData) => {
+    const user = localStorage.getItem('user');
+    const { token } = JSON.parse(user);
+    const response = await fetch(`${BASE_URL}/file/user-files`, {
+      method: 'GET',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    return data;
+  },
+
+  shareFileApi: async (fileId, email, read, write) => {
+    const shareData = {
+      email,
+      read,
+      write,
+    };
+    const user = localStorage.getItem('user');
+    const { token } = JSON.parse(user);
+    const response = await fetch(`${BASE_URL}/file/share/${fileId}`, {
+      method: 'POST',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(shareData),
+    });
+    const data = await response.json();
+    return data;
+  },
+
+  deleteFileApi: async (fileId) => {
+    const user = localStorage.getItem('user');
+    const { token } = JSON.parse(user);
+    const response = await fetch(`${BASE_URL}/file/delete/${fileId}`, {
+      method: 'DELETE',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        authorization: `Bearer ${token}`,
+      },
     });
     const data = await response.json();
     return data;

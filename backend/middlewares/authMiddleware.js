@@ -9,7 +9,7 @@ authMiddleware.authenticateUser = (req, res, next) => {
   }
 
   try {
-    const decodedToken = jwt.verify(token, 'your-secret-key'); // Replace 'your-secret-key' with the same secret key used while generating the token
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Replace 'your-secret-key' with the same secret key used while generating the token
     req.userId = decodedToken.userId;
     next();
   } catch (error) {

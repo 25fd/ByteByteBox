@@ -13,6 +13,6 @@ router.delete('/delete/:fileId', authMiddleware.authenticateUser, fileController
 // File share route
 router.post('/share/:fileId', authMiddleware.authenticateUser, fileController.shareFile);
 
-router.get('/user-files', authenticateUser, fileController.getUserFiles);
+router.get('/user-files', authMiddleware.authenticateUser, fileController.getUserFiles);
 
 module.exports = router;

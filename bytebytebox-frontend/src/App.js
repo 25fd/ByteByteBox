@@ -12,11 +12,12 @@ import RegistrationPage from './pages/RegistrationPage';
 import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import Header from './components/header';
+import MyFilesPage from './pages/myFilesPage';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const { user } = useAuth(); // Get the authenticated user from the AuthContext
+  const { user } = useAuth();
 
-  return user ? <Outlet /> : <Navigate to="/login" />
+  return user ? <Outlet />: <Navigate to="/login" />
 };
 
 function App() {
@@ -26,16 +27,15 @@ function App() {
       <AuthProvider>
         <Routes>
         <Route exact path='/' element={<PrivateRoute/>}>
-            <Route exact path='/' element={<LandingPage/>}/>
-           
+            <Route exact path='/home' element={<LandingPage/>}/>
+            <Route exact path='/upload' element={[<Header />, <FileUploadPage/>]}/>
+          <Route exact path='/myfiles' element={[<Header />, <MyFilesPage/>]}/>
           </Route>
           <Route
             path="/register"
             element={[<Header />, <RegistrationPage />]}
           />
           <Route path="/login" element={<LoginPage />} />
-        <Route exact path='/upload' element={[<Header />, <FileUploadPage/>]}/>
-
         </Routes>
       </AuthProvider>
       </Fragment>

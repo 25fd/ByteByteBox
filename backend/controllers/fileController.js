@@ -3,7 +3,7 @@ const fileService = require('../services/fileService');
 // File upload controller
 exports.uploadFile = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req;
 
     // Upload the file to S3 and save the file document
     const fileData = await fileService.uploadAndSaveFile(req.file, userId);
@@ -33,10 +33,12 @@ exports.deleteFile = async (req, res) => {
 // File share controller
 exports.shareFile = async (req, res) => {
   try {
-    const { fileId, userId, read, write } = req.body;
+    const { email, read, write } = req.body;
+    const { fileId } = req.params;
 
+    console.log(req.body);
     // Share the file with the specified user
-    await fileService.shareFileWithUser(fileId, userId, read, write);
+    await fileService.shareFileWithUser(fileId, email, read, write);
 
     res.status(200).json({ message: 'File shared successfully' });
   } catch (error) {
@@ -53,7 +55,7 @@ exports.getUserFiles = async (req, res) => {
     // Get user files using the file service
     const userFiles = await fileService.getUserFiles(userId);
 
-    res.status(200).json({ files: userFiles });
+    res.status(200).json(userFiles);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

@@ -14,9 +14,11 @@ export const AuthProvider = ({ children }) => {
   // Function to handle user login
   const login = async (email, password) => {
     try {
-      const response = await api.login(email, password);
-      setUser(response.data.user);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      console.log('Logging in user...', email, password);
+      const response = await api.login({ email, password });
+      setUser(response);
+      localStorage.setItem('user', JSON.stringify(response));
+      return response;
     } catch (error) {
       console.error('Error logging in:', error);
       throw error;
@@ -24,11 +26,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Function to handle user registration
-  const register = async (name, email, password) => {
+  const register = async (username, email, password) => {
     try {
-      const response = await api.register(name, email, password);
-      setUser(response.data.user);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      await api.register({username, email, password});
+      // setUser(response.data.user);
+      // localStorage.setItem('user', JSON.stringify(response.data.user));
     } catch (error) {
       console.error('Error registering user:', error);
       throw error;
@@ -39,6 +41,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+
+    console.log(user);
   };
 
   // Function to check if a user is authenticated
