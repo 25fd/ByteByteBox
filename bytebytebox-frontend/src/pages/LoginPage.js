@@ -3,15 +3,17 @@ import LoginForm from '../components/LoginForm';
 import Header from '../components/header';
 import '../styles/LoginPage.css';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const { user } = useAuth();
-  // if (user) {
-  //   window.location.href = '/home';
-  // }
+  const navigate = useNavigate();
+  if (user) {
+    navigate('/home');
+  }
   return (
     <>
-    <Header loginUser={null}/>
+    <Header/>
     <div>
       <h1>User Login</h1>
       <LoginForm />
